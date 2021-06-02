@@ -1,0 +1,48 @@
+table {
+    border-collapse: collapse;
+    margin: 0px auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width: 600px;
+}
+
+td, th {
+    padding: 10px;
+    border: 1px solid #0c0c0c;
+    text-align: center;
+}
+
+input[type="button"] {
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgb(0 160 88 / 82%);
+    color: white;
+    cursor: pointer;
+}
+
+table input{
+    width: 97%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    border-radius: 5px;
+    border: 1px solid #000;
+}
+
+.btn-xoa {
+    color: red;
+    cursor: pointer;
+}
+
+.btn-sua {
+    color: green;
+    cursor: pointer;
+}
+
+.thong-bao-loi {
+    margin: 0;
+    color: red;
+    text-align: center;
+    margin-top: 5px;
+}

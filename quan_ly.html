@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="xu_ly.js"></script>
+    <script type="text/javascript" src="tableToExcel.js"></script>
+</head>
+
+<body>
+    <form accept="" method="">
+        <input type="hidden" id="chi_so_cap_nhat">
+        <table>
+            <tr>
+                <td>Mã Sinh Viên</td>
+                <td>
+                    <input type="text" id="ma_sv">
+                    <p class="thong-bao-loi" id="ma_sv_tb"></p>
+                </td>
+            </tr>
+            <tr>
+                <td>Họ Và Tên</td>
+                <td>
+                    <input type="text" id="ho_ten">
+                    <p class="thong-bao-loi" id="ho_ten_tb"></p>
+                </td>
+            </tr>
+            <tr>
+                <td>Số Điện Thoại</td>
+                <td>
+                    <input type="text" id="so_dien_thoai">
+                    <p class="thong-bao-loi" id="so_dien_thoai_tb"></p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button" value="Đăng Ký" id="nut_dang_ky">
+                    <input style="background-color: green;display: none;" type="button" value="Cập Nhật" id="nut_cap_nhat">
+                </td>
+            </tr>
+            
+        </table>
+    </form>
+
+    <table border="1" id = "du_lieu" data-cols-width = " 10,30,30,30 " >
+        <thead>
+            <tr data-exclude="true">
+                <td colspan="5">
+                    <h3>Danh Sách Sinh Viên</h3>
+                </td>
+            </tr>
+            <tr data-exclude="true">
+                <td colspan="5">
+                    <input style="background-color: red;display: yes;" type="button" value="Xuất dữ liệu" id="xdl">
+                </td>
+            </tr>
+            <tr>
+                <th data-f-bold="true" data-a-h="center" data-b-a-s="medium">STT</th>
+                <th data-f-bold="true" data-a-h="center" data-b-a-s="medium">MSV</th>
+                <th data-f-bold="true" data-a-h="center" data-b-a-s="medium">Họ Và Tên</th>
+                <th data-f-bold="true" data-a-h="center" data-b-a-s="medium">Số Điện Thoại</th>
+                <th data-exclude="true">Hành Động</th>
+            </tr>
+        </thead>
+
+        <tbody id="danh_sach"></tbody>
+    </table>
+    
+    <script>
+        //hiển thị danh sách
+        let objSinhVien = new SinhVien();
+        objSinhVien.stt = 0;
+        let html_danh_sach = document.getElementById('danh_sach');
+        objSinhVien.thiet_lap_the_danh_sach( html_danh_sach );
+        objSinhVien.hien_thi_danh_sach();
+
+        //lấy đối tượng
+        let nut_dang_ky  = document.getElementById('nut_dang_ky');
+        let nut_cap_nhat = document.getElementById('nut_cap_nhat');
+
+        //đăng kí
+        nut_dang_ky.addEventListener('click',function(){
+
+            //lấy giá trị nhập
+            let ma_sv           = document.getElementById('ma_sv');
+            let ho_ten          = document.getElementById('ho_ten');
+            let so_dien_thoai   = document.getElementById('so_dien_thoai');
+            let gia_tri_ma_sv           = ma_sv.value;
+            let gia_tri_ho_ten          = ho_ten.value;
+            let gia_tri_so_dien_thoai   = so_dien_thoai.value;
+
+            //khai báo đối tượng
+            let ma_sv_tb            = document.getElementById('ma_sv_tb');
+            let ho_ten_tb           = document.getElementById('ho_ten_tb');
+            let so_dien_thoai_tb    = document.getElementById('so_dien_thoai_tb');
+
+            //xóa thông báo
+            ma_sv_tb.innerHTML          = '';
+            ho_ten_tb.innerHTML         = '';
+            so_dien_thoai_tb.innerHTML  = '';
+
+            //kiểm tra thông tin 
+            let co_the_them = true;
+            if( gia_tri_ma_sv == '' ){
+                co_the_them = false;
+                ma_sv_tb.innerHTML = 'Vui lòng nhập mã sinh viên';
+            }
+            if( gia_tri_ho_ten == '' ){
+                co_the_them = false;
+                ho_ten_tb.innerHTML = 'Vui lòng nhập họ và tên';
+            }            
+            if( gia_tri_so_dien_thoai == '' ){
+                co_the_them = false;
+                so_dien_thoai_tb.innerHTML = 'Vui lòng nhập số điện thoại';
+            }            
+            if( co_the_them == true  ){
+
+                //thêm sinh viên
+                objSinhVien.ma_sv   = gia_tri_ma_sv;
+                objSinhVien.ten_sv  = gia_tri_ho_ten;
+                objSinhVien.sdt_sv  = gia_tri_so_dien_thoai;
+                objSinhVien.stt = objSinhVien.stt + 1;
+                objSinhVien.them_sinh_vien();
+            }
+        });
+
+        //cập nhật
+        nut_cap_nhat.addEventListener('click',function(){
+
+             //lấy giá trị nhập vào
+            let ma_sv           = document.getElementById('ma_sv');
+            let ho_ten          = document.getElementById('ho_ten');
+            let so_dien_thoai   = document.getElementById('so_dien_thoai');            
+            let gia_tri_ma_sv           = ma_sv.value;
+            let gia_tri_ho_ten          = ho_ten.value;
+            let gia_tri_so_dien_thoai   = so_dien_thoai.value;
+
+            //lấy giá trị chỉ số đang được cập nhật
+            let chi_so_cap_nhat = document.getElementById('chi_so_cap_nhat').value;
+
+            //cập nhật sinh viên
+            objSinhVien.ma_sv   = gia_tri_ma_sv;
+            objSinhVien.ten_sv  = gia_tri_ho_ten;
+            objSinhVien.sdt_sv  = gia_tri_so_dien_thoai;
+            objSinhVien.cap_nhat_sinh_vien();
+        });
+    
+        // xuất dữ liệu
+        xdl.addEventListener('click',function(){
+            TableToExcel.convert(document.getElementById("du_lieu"), {
+                name: "Danh Sách Sinh Viên.xlsx",
+                sheet: {
+                    name: "Sheet 1"
+                }
+            });
+        });
+       
+    </script>
+
+    
+</body>
+</html>
